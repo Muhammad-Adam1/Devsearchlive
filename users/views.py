@@ -6,9 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models import Profile
+from .forms import CustomeUserCreationForm
+
 
 def loginUser(request):
-
+    page = 'login'
     if request.user.is_authenticated:
         return redirect("profiles")
     if request.method == "POST":
@@ -25,13 +27,32 @@ def loginUser(request):
             return redirect('profiles')
         else:
             messages.error(request,"Username or Password is incorrect")
-    print(request.POST)
     return render(request, "users/login_register.html")
 
 def logoutUser(request):
     logout(request)
-    messages.error(request,"User is logged out!")
+    messages.info(request,"User is logged out!")
     return redirect('login')
+
+def registerUser(request):
+    page = 'register'
+    form = CustomeUserCreationForm()
+
+    if request.method == "POST":
+        form = CustomeUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            messages.success(request, "User account was created succesfully!")
+            
+
+            login(request, user)
+            return redirect('profiles')
+        else:
+            messages.error(request, "An error has occured during registration")
+    context = {'page':page, 'form':form}
+    return render(request, 'users/login_register.html', context)
 
 def profiles(request):
     profiles = Profile.objects.all()

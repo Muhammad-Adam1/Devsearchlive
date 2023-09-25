@@ -17,17 +17,27 @@
     <body>
         {% include "navbar.html" %}
 
-            {% if messages %}
+            {% comment %} {% if messages %}
                 <ul class="messages">
                 {% for message in messages %}
                 <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
                 {% endfor %}
                 </ul>
-            {% endif %}
+            {% endif %} {% endcomment %}
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert--{{message.tags}}">
+                    <p class="alert__message">{{message}}</p>
+                    <button class="alert__close">⨯</button>
+                </div>
+                {% endfor %}
+            {% endif %} 
 
         {% block content %}
 
         {% endblock content %}
         <script src="https://kit.fontawesome.com/39eecf0a01.js" crossorigin="anonymous"></script>
+        <script src="{% static 'uikit/app.js' %}"></script>
     </body>
 </html>

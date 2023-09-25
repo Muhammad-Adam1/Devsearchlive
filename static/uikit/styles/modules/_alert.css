@@ -1,5 +1,9 @@
 .alert {
-  display: inline-flex;
+  position: absolute !important;
+  left: 500px !important;
+  top: 160px;
+  z-index: 1000;
+  display:inline-flex;
   gap: 3rem;
   justify-content: space-between;
   align-items: center;
@@ -8,6 +12,7 @@
   border: 1px solid var(--color-white-light);
   margin-bottom: 1rem;
   margin-right: 1rem;
+  background-color: #fff;
 }
 
 .alert,
