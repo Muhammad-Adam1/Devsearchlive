@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models import Profile
-from .forms import CustomeUserCreationForm
+from .forms import CustomeUserCreationForm, ProfileForm, SkillForm
 
 
 def loginUser(request):
@@ -21,7 +21,7 @@ def loginUser(request):
         except:
             messages.error(request, "Username does not exist")
         user = authenticate(request, username=username, password=password)
-
+    
         if user is not None:
             login(request, user)
             return redirect('profiles')
@@ -48,7 +48,7 @@ def registerUser(request):
             
 
             login(request, user)
-            return redirect('profiles')
+            return redirect('edit-account')
         else:
             messages.error(request, "An error has occured during registration")
     context = {'page':page, 'form':form}
@@ -65,3 +65,71 @@ def userprofile(request, pk):
     otherSkills = profile.skill_set.filter(description="")
     context = {'profile': profile, 'topSkills':topSkills, 'otherSkills':otherSkills}
     return render(request, 'users/user-profile.html', context)
+
+@login_required(login_url='login')
+def userAccount(request):
+    profile = request.user.profile
+
+    skills = profile.skill_set.all
+    projects = profile.project_set.all()
+
+    context = {'profile': profile, 'skills': skills, 'projects':projects}
+    return render(request, 'users/account.html', context)
+
+@login_required(login_url='login')
+def editAccount(request):
+    profile = request.user.profile
+    form = ProfileForm(instance=profile)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('account') 
+    context = {'form':form}
+    return render(request, 'users/profile_form.html', context)
+
+
+@login_required(login_url='login')
+def createSkill(request):
+    profile = request.user.profile
+    form = SkillForm()
+
+    if request.method == 'POST':
+        form = SkillForm(request.POST)
+        if form.is_valid():
+            skill = form.save(commit=False)
+            skill.owner = profile
+            skill.save()
+            messages.success(request, "Skill was added succesfully!")
+            return redirect('account')
+    context = {'form':form}
+    return render(request, "users/skill_form.html", context)
+
+@login_required(login_url='login')
+def updateSkill(request, pk):
+    profile = request.user.profile
+    skill = profile.skill_set.get(id=pk)
+    form = SkillForm(instance=skill)
+
+    if request.method == 'POST':
+        form = SkillForm(request.POST, instance=skill)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "skill was updated succesfully!")
+            return redirect('account')
+    context = {'form':form}
+    return render(request, "users/skill_form.html", context)
+
+@login_required(login_url='login')
+def deleteSkill(request, pk):
+    profile = request.user.profile
+    skill = profile.skill_set.get(id=pk)
+    context = {'object':skill}
+
+    if request.method == 'POST':
+        skill.delete()
+        messages.success(request, "skill was deleted succesfully!")
+        return redirect('account')
+    
+    return render(request, 'delete.html', context)
