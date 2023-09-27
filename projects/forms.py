@@ -5,7 +5,7 @@ class ProjectForm(ModelForm):
     class Meta:
         model = Project
         fields = '__all__'
-        exclude = ['vote_tottal', 'vote_ratio']
+        exclude = ['owner','vote_tottal', 'vote_ratio']
     
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
