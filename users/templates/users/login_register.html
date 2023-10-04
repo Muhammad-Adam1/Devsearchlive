@@ -59,7 +59,10 @@
         <p>Hello Developer, Welcome Back!</p>
         </div>
 
-        <form method="POST" action="{% url 'login' %}" class="form auth__form">
+        {% comment %} commenting it so that the user can redirect to the url we provide him {% endcomment %}
+        {% comment %} <form method="POST" action="{% url 'login' %}" class="form auth__form"> {% endcomment %}
+        <form method="POST" action="" class="form auth__form">
+            {% comment %} it still goes to the login page function {% endcomment %}
             {% csrf_token %}
         <!-- Input:Username -->
         <div class="form__field">
