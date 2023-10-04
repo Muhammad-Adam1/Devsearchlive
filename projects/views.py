@@ -1,23 +1,38 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from . models import Project
-from .forms import ProjectForm
-
-from .utils import SearchProjects
+from . forms import ProjectForm, ReviewForm
+from . utils import SearchProjects, paginateProjects
 
 def projects(request):
     # searching the query using the utils file, so not to create mess 
     projects, search_query = SearchProjects(request)
 
+    # passing the results and projects to the paginateProjects function to paginate the projects
+    custom_range, projects = paginateProjects(request, projects, 3)
     # passing search_query so that the input have the search value 
-    context = {'projects': projects, 'search_query':search_query}
+    context = {'projects': projects, 'search_query':search_query, 'custom_range':custom_range}
 
     return render(request, 'projects/projects.html', context)
 
 def project(request, pk):
     projectObject = Project.objects.get(id=pk)
-    context = {'project':projectObject}
+    form = ReviewForm()
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        review = form.save(commit=False)
+        # connecting review with the project
+        review.project = projectObject
+        review.owner = request.user.profile 
+        review.save()
+        # updating the vote_total and vote_ratio
+        projectObject.getVoteCount
+        messages.success(request, "Your review was successfully submitted!")
+        return redirect('project', pk=projectObject.id)
+    context = {'project':projectObject, 'form' : form}
     return render(request, 'projects/single-project.html', context)
 
 @login_required(login_url="login")

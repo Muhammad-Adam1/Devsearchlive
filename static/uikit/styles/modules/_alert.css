@@ -1,7 +1,7 @@
 .alert {
-  position: absolute !important;
+  position: fixed !important;
   left: 500px !important;
-  top: 160px;
+  top: 100px;
   z-index: 1000;
   display:inline-flex;
   gap: 3rem;
