@@ -4,14 +4,16 @@ from django.contrib.auth.decorators import login_required
 from . models import Project
 from .forms import ProjectForm
 
-from .utils import SearchProjects
+from .utils import SearchProjects, paginateProjects
 
 def projects(request):
     # searching the query using the utils file, so not to create mess 
     projects, search_query = SearchProjects(request)
 
+    # passing the results and projects to the paginateProjects function to paginate the projects
+    custom_range, projects = paginateProjects(request, projects, 3)
     # passing search_query so that the input have the search value 
-    context = {'projects': projects, 'search_query':search_query}
+    context = {'projects': projects, 'search_query':search_query, 'custom_range':custom_range}
 
     return render(request, 'projects/projects.html', context)
 

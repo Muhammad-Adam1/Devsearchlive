@@ -29,8 +29,9 @@ class Project(models.Model):
         except:
             img = ""
         return img 
-    # class Meta:
-    #     ordering = ['-vote_ratio', '-vote_total', 'title']
+    class Meta:
+        # ordering = ['-vote_ratio', '-vote_total', 'title']
+        ordering = ['-created']
 
 
 class Review(models.Model):
