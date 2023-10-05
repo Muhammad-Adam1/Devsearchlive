@@ -46,7 +46,10 @@
             {% endif %}
 
         </ul>
-        <a href="#" class="btn btn--sub btn--lg">Send Message </a>
+        {% comment %} if the viewer profile id doesn't match than {% endcomment %}
+        {% if request.user.profile.id != profile.id %}
+            <a href="{% url "create-message" profile.id %}" class="btn btn--sub btn--lg">Send Message </a>
+        {% endif %}
         </div>
     </div>
     </div>

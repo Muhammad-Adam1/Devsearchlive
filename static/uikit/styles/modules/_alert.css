@@ -1,6 +1,6 @@
 .alert {
   position: fixed !important;
-  left: 500px !important;
+  left: 505px !important;
   top: 100px;
   z-index: 1000;
   display:inline-flex;
