@@ -135,3 +135,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles' # we use it when we turn debug = false an
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# email integration 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+# TLS port 
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# set them in the environment variable
+EMAIL_HOST_USER = 'm.adamgee974@gmail.com'
+EMAIL_HOST_PASSWORD = 'etrkhbodcdlhfugu'
+
+
