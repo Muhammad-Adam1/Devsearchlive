@@ -4,8 +4,8 @@ from .models import  Project, Review
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        fields = '__all__'
-        exclude = ['owner','vote_tottal', 'vote_ratio']
+        # fields = '__all__'
+        exclude = ['owner','vote_tottal', 'vote_ratio', 'tags', 'vote_total']
     
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)

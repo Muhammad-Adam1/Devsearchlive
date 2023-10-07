@@ -23,6 +23,19 @@ class Profile(models.Model):
     def __str__(self):
         # return str(self.user.username)
         return str(self.user)
+    
+    class Meta:
+        # negtive means ascending order and we are ranking them according to  the highest vote ranking, than
+        # highest vote and then the title
+        ordering = ['created']
+    
+    @property
+    def imageURL(self):
+        try:
+            img = self.profile_image.url
+        except:
+            img = ""
+        return img 
 
 
 

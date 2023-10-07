@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from . models import Project
+from . models import Project,Tag
 from . forms import ProjectForm, ReviewForm
 from . utils import SearchProjects, paginateProjects
 
@@ -41,11 +41,16 @@ def createProject(request):
     form = ProjectForm()
     
     if request.method == 'POST':
+        newtags = request.POST.get('newtags').replace(',', ' ').split()
         form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
             project = form.save(commit=False)
             project.owner = profile
             project.save()
+            for tag in newtags:
+                tag, created = Tag.objects.get_or_create(name=tag)
+                project.tags.add(tag)
+            
             return redirect('account')
     context = {'form':form}
     return render(request, 'projects/project-form.html', context)
@@ -58,13 +63,21 @@ def updateProject(request, pk):
     form = ProjectForm(instance=project)
 
     if request.method == 'POST':
+        newtags = request.POST.get('newtags').replace(',', ' ').split()
+        # take the new tags and add them to the project
+        # replacing the ',' with sapce
+        print('DATA: ', newtags )
         form = ProjectForm(request.POST, request.FILES, instance=project)
         # here we tell that which object we are going to modify 
         if form.is_valid:
-            form.save()
+            project = form.save()
+            for tag in newtags:
+                tag, created = Tag.objects.get_or_create(name=tag)
+                project.tags.add(tag)
+            # form.save()
             return redirect('account')
 
-    context = {'form':form}
+    context = {'form':form, 'project' : project}
     return render(request, templates, context)
 
 @login_required(login_url="login")
@@ -74,6 +87,6 @@ def deleteProject(request, pk):
 
     if request.method == "POST":
         project.delete()
-        return redirect('projects')
+        return redirect('account')
     context = {"object":project}
     return render(request, 'delete.html', context)
